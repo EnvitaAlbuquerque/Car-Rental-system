@@ -1,0 +1,367 @@
+{% extends 'base.html' %}
+
+{% block title %}Vehicles{% endblock title %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'style.css' %}">
+{% block body %}
+<form method="post" action="\bill" id="bookingForm" onsubmit="return showSuccessMessage()">
+  {% csrf_token %}
+<div class="container" id="yo">
+  
+  <div class="cols my-4">
+    <h2 style="text-align: center" class="head my-4">Booking Details</h2>   
+      <div class="form-group col-md-12">
+        <label for="billname">Full Name:</label>
+        <input type="text" class="form-control" id="billname" name="billname" placeholder="Full Name" required pattern="[A-Za-z\s]{2,}">
+        {% comment %} <small class="form-text text-muted">Name should be at least only contain letters.</small> {% endcomment %}
+      </div>
+      <div class="form-row ">
+        <div class="form-group col-md-6">
+          <label for="billemail">Email:</label>
+          <input type="email" class="form-control" id="billemail" name="billemail" placeholder="name@gmail.com" required>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="billphone">Phone Number:</label>
+          <input type="tel" class="form-control" id="billphone" name="billphone" placeholder="123-456-7890" required  pattern="\d{10}" maxlength="10">         <small class="form-text text-muted">Phone number should be 10 digits.</small>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="billaddress">Address:</label>
+        <input type="text" class="form-control" id="billaddress" name="billaddress" placeholder="COEP" required>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="billcity">City:</label>
+          <input type="text" class="form-control" id="billcity" name="billcity" required>
+        </div>
+        <div class="form-group col-md-4">
+          <label for="inputState">State:</label>
+          <select id="inputState" class="form-control" name="state" required>
+            <option value="" selected disabled>Choose...</option>
+            <option>Maharashtra</option>
+            <option>Delhi</option>
+            <option>Andhra Pradesh</option>
+            <option>Gujarat</option>
+            <option>Tamil Nadu</option>
+            <option>Kerala</option>
+            <option>Karnataka</option>
+          </select>
+        </div>
+        <div class="form-group col-md-2">
+          <label for="inputZip">Pin Code:</label>
+          <input type="text" class="form-control" id="inputZip" name="pincode" required pattern="[0-9]{6}">
+          <small class="form-text text-muted">Pin code should be 6 digits.</small>
+        </div>
+      </div>  
+      <h2 style="text-align: center" class="head my-4">Car Details</h2>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="cars11">Car Chosen (For Confirmation):</label>
+          <select id="cars11" name="cars11" class="form-control" required>
+            <option value="" selected disabled>Choose...</option>
+            <option value="Renault">Renault</option>
+            <option value="Alto 800">Alto 800</option>
+            <option value="Innova Crysta">Innova Crysta</option>
+            <option value="Chevy Traverse">Chevy Traverse</option>
+            <option value="BMW X5">BMW X5</option>
+            <option value="Honda City">Honda City</option>
+            <option value="Mercedes Benz">Mercedes Benz</option>
+            <option value="Swift Dezire">Swift Dezire</option>
+            <option value="KIA">KIA</option>
+          </select>
+        </div>
+        {% comment %} <div class="form-group col-md-6">
+          <label for="color1">Color of the Car:</label>
+          <select id="color1" class="form-control" name="color1" required>
+            <option value="" selected disabled>Choose...</option>
+            <option value="Black">Black</option>
+            <option value="Red">Red</option>
+            <option value="White">White</option>
+            <option value="Silver">Silver</option>
+            <option value="Blue">Blue</option>
+          </select>
+        </div> {% endcomment %}
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="dayss">No. of Days:</label>
+          <input type="number" class="form-control" id="dayss" name="dayss" min="1" max="30" required>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="date">Pickup Date:</label>
+          <input type="date" class="form-control" id="date" name="date" required>
+          <script>
+            // Function to set the minimum date to today's date
+            function setMinDate() {
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('date').setAttribute('min', today);
+            }
+    
+            // Call the function when the DOM content is loaded
+            document.addEventListener('DOMContentLoaded', setMinDate);
+        </script>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="fl">From Location:</label>
+          <input type="text" class="form-control" id="fl" name="fl" required>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="tl">To Location:</label>
+          <input type="text" class="form-control" id="tl" name="tl" required>
+        </div>
+      </div>
+   
+      <div class="cols1 my-4">
+        <h2 style="text-align: center">Total Bill</h2>
+        <ul class="list-group">
+          <li class="list-group-item d-flex justify-content-between align-items-center my-3" id="rentsec">
+            <p>Total Rent is: Rs <span></span></p>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Payment Details Section -->
+      <h2 style="text-align: center" class="head my-4">Payment Details</h2>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="paymentMethod">Payment Method:</label>
+          <select id="paymentMethod" class="form-control" name="paymentMethod" required>
+            <option value="" selected disabled>Choose...</option>
+            <option value="credit_card">Credit Card</option>
+            <option value="upi">UPI</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group" id="creditCardDetails" style="display: none;">
+        <h3>Credit Card Details</h3>
+        <label for="cardNumber">Card Number:</label>
+        <input type="text" class="form-control" id="cardNumber" name="cardNumber" placeholder="1234 5678 9012 3456" pattern="\d{16}" maxlength="16">
+        <label for="cardExpiry">Expiry Date:</label>
+        <input type="text" class="form-control" id="cardExpiry" name="cardExpiry" placeholder="MM/YY" pattern="\d{2}/\d{2}">
+        <label for="cardCvc">CVC:</label>
+        <input type="text" class="form-control" id="cardCvc" name="cardCvc" placeholder="123" pattern="\d{3}">
+      </div>
+      <div class="form-group" id="upiDetails" style="display: none;">
+        <h3>UPI Details</h3>
+        <label for="upiId">UPI ID:</label>
+        <input type="text" class="form-control" id="upiId" name="upiId" placeholder="example@upi" required>
+      </div>
+  </div>
+</div>
+
+<div class="text-center">
+  <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#exampleModalLong" id="showre" onclick="calculate()">Display Bill</button> 
+  <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content" style="background-color: rgb(226, 239, 251);">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalCenterTitle">Receipt:</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="printThis">
+          <h1 style="text-align: center; background: -webkit-linear-gradient(#77f7f1, #094240); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Thanks for Booking!</h1><br>
+          <p id="n1" class="p2" style="text-align: center; font-size: 25px; font-weight: bold; color: rgb(35, 12, 109);">Customer Name: <span></span></p>
+          <p style="text-align: center;">
+            <span id="l1" class="p3" style="font-size: 25px; font-weight: bold; color: rgb(35, 12, 109);">From: <span></span></span> &nbsp;&nbsp;&nbsp;--------->&nbsp;&nbsp;&nbsp;
+            <span id="l2" class="p3" style="font-size: 25px; font-weight: bold; color: rgb(35, 12, 109);">To: <span></span></span>
+          </p>
+          <p id="d2" class="p8" style="text-align: center; font-size: 25px; font-weight: bold; color: rgb(35, 12, 109);">No. of days for rent: <span></span></p>
+          <p id="d1" class="p2" style="text-align: center; font-size: 25px; font-weight: bold; color: rgb(35, 12, 109);">Pickup date: <span></span></p>
+          <p style="text-align: center; font-size: 23px;">
+            <span style="font-size: 30px; font-weight: bold;">Car Details:</span><br>
+            <span style="font-weight: bold" id="crs1">Car: <span></span></span><br>
+            {% comment %} <span style="font-weight: bold" id="crs2">Car color: <span></span></span><br><br> {% endcomment %}
+          </p>
+          {% comment %} <p id="total" class="p1" style="text-align: center; font-size: 25px; font-weight: bold;">Total Bill: Rs <span>N/A</span></p>
+          
+            {% endcomment %}
+            
+              {% comment %} <li class="list-group-item d-flex justify-content-between align-items-center my-3" id="rentsec"> {% endcomment %}
+                <p id="total" class="p1" style="text-align: center; font-size: 25px; font-weight: bold;">Total Rent is: Rs <span></span></p>
+              </li>
+            </ul>
+         
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="btnPrint">Download Receipt</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button class="btn btn-primary" type="submit">Confirm Booking</button>
+</div>
+</form>
+
+
+
+
+
+<script>
+
+  function calculate(){
+    var select = document.getElementById("cars11");
+    var option = select.value;
+    var rent = 0;
+    if(option == "Renault"){
+        rent = 2000;
+    }
+    else if(option == "Alto 800"){
+      rent = 700;
+    }
+    else if(option == "Innova Crysta"){
+      rent = 3500;
+    }
+    else if(option == "Chevy Traverse"){
+      rent = 3000;
+    }
+    else if(option == "BMW X5"){
+      rent = 10000;
+    }
+    else if(option == "Honda City"){
+      rent = 2500;
+    }
+    else if(option == "Mercedes Benz"){
+      rent = 40000;
+    }
+    else if(option == "Swift Dezire"){
+      rent = 1000;
+    }
+    else if(option == "KIA"){
+      rent = 800;
+    }
+    else{
+      rent = 0;
+    }
+    var rent1 = parseInt(rent);
+    var d1 = document.getElementById('d11');
+    var d2 = d1.querySelector('#dayss');
+    var d3 = Number(d2.value);
+    var total = rent * d3;
+
+    var num = document.getElementById('rentsec');
+    var num1 = num.querySelector("span");
+    num1.textContent = total;
+
+    var name1 = document.getElementById("billname").value;
+    var name2 = document.getElementById("n1");
+    var name3 = name2.querySelector("span");
+    name3.innerHTML = name1;
+
+      var loc_frm1 = document.getElementById("fl").value;
+      var loc_frm2 = document.getElementById("l1");
+      var loc_frm3 = loc_frm2.querySelector("span");
+      loc_frm3.innerHTML = loc_frm1;
+
+      var loc_to1 = document.getElementById("tl").value;
+      var loc_to2 = document.getElementById("l2");
+      var loc_to3 = loc_to2.querySelector("span");
+      loc_to3.innerHTML = loc_to1;
+
+      var da1 = document.getElementById("date").value;
+      var da2 = document.getElementById("d1");
+      var da3 = da2.querySelector("span");
+      da3.innerHTML = da1;
+
+      var dy1 = document.getElementById('d2');
+      var dy2 = dy1.querySelector("span");
+      dy2.innerHTML = d3;
+
+      var carn1 = document.getElementById('crs1');
+      var carn2 = carn1.querySelector("span");
+      carn2.innerHTML = option;
+
+      var select1 = document.getElementById("color1");
+      var option1 = select1.value;
+
+      var carc1 = document.getElementById('crs2');
+      var carc2 = carc1.querySelector("span");
+      carc2.innerHTML = option1;
+
+      var tp = document.getElementById("printThis")
+      var tp1 = tp.querySelector(".p1")
+      var tp2 = tp1.querySelector("span");
+      tp2.innerHTML = total;
+  }
+
+  document.getElementById("btnPrint").onclick = function () {
+    printElement(document.getElementById("printThis"));
+}
+
+function printElement(elem) {
+    var domClone = elem.cloneNode(true);
+    
+    var $printSection = document.getElementById("printSection");
+    
+    if (!$printSection) {
+        var $printSection = document.createElement("div");
+        $printSection.id = "printSection";
+        document.body.appendChild($printSection);
+    }
+    
+    $printSection.innerHTML = "";
+    $printSection.appendChild(domClone);
+    window.print();
+}
+</script>
+
+
+
+
+
+
+
+
+
+
+<script>
+  // Function to calculate the total rent and display the bill
+  function calculate() {
+    var select = document.getElementById("cars11");
+    var option = select.value;
+    var rent = 0;
+
+    switch(option) {
+      case "Renault":
+        rent = 2000;
+        break;
+      case "Alto 800":
+        rent = 700;
+        break;
+      case "Innova Crysta":
+        rent = 3500;
+        break;
+      case "Chevy Traverse":
+        rent = 3000;
+        break;
+      case "BMW X5":
+        rent = 10000;
+        break;
+      case "Honda City":
+        rent = 2500;
+        break;
+      case "Mercedes Benz":
+        rent = 40000;
+        break;
+      case "Swift Dezire":
+        rent = 1000;
+        break;
+      case "KIA":
+        rent = 800;
+        break;
+      default:
+        rent = 0;
+        break;
+    }
+
+    var days = document.getElementById('dayss').value;
+    var total = rent * days;
+
+</script>
+{% endblock body %}
+

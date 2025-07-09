@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'style.css' %}">
+
+{% block body %}
+
+<section class="h-100 bg-dark">
+    {% include 'messages.html' %}
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col">
+                <div class="card card-registration my-4">
+                    <div class="row g-0">
+                        <div class="col-lg-6 d-flex align-items-center gradient-custom-2 " {%load static%}
+            style="background-image: url({%static "honda.jpg"%});  background-repeat: no-repeat; background-size: cover;">
+              <div class="text-black px-3 py-4 p-md-5 mx-md-4">
+              </div>
+            </div>
+                        <div class="col-xl-6">
+                            <div class="card-body p-md-5 text-black">
+                                <h3 class="mb-5 text-uppercase">Sign Up</h3>
+
+                                <form method="post" action="\register" onsubmit="return validateForm()">
+                                    {% csrf_token %}
+                                    
+                                    <!-- Name Field -->
+                                    <div class="form-group">
+                                        <label for="name">Name</label>
+                                        <input type="text" class="form-control" id="name" placeholder="Name" name='name' 
+                                               required pattern="[A-Za-z\s]{2,}">
+                                        {% comment %} <small class="form-text text-muted">Name should contain only contain letters.</small> {% endcomment %}
+                                    </div>
+                                    
+                                    <!-- Username Field -->
+                                    <div class="form-group">
+                                        <label for="username">Username</label>
+                                        <input type="text" class="form-control" id="username" placeholder="Username" name='username' 
+                                               required pattern="[A-Za-z0-9_]{5,}">
+                                        {% comment %} <small class="form-text text-muted">Username should be at least 5 characters long and can include letters, numbers, and underscores.</small> {% endcomment %}
+                                    </div>
+                                    
+                                    <!-- Phone Number Field -->
+                                    <div class="form-group">
+                                        <label for="number">Phone Number</label>
+                                        <input type="tel" class="form-control" id="number" placeholder="Eg: 9120001478" name='number' 
+                                                required  pattern="\d{10}" maxlength="10">
+                                        {% comment %} <small class="form-text text-muted">Phone number should be exactly 10 digits.</small> {% endcomment %}
+                                    </div>
+                                    
+                                    <!-- Email Field -->
+                                    <div class="form-group">
+                                        <label for="email">Email address</label>
+                                        <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email" name='email' 
+                                               required>
+                                        {% comment %} <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> {% endcomment %}
+                                    </div>
+                                    
+                                    <!-- Password Field -->
+                                    <div class="form-group">
+                                        <label for="password">Password</label>
+                                        <input type="password" class="form-control" id="password" placeholder="Password" name='password' 
+                                               required minlength="8" 
+                                               pattern="(?=.*\d)(?=.*[A-Z])(?=.*[\W_]).{8,}">
+                                        <small class="form-text text-muted">Password should be at least 8 characters long and include at least one number, one uppercase letter, and one special character.</small>
+                                    </div>
+                                    
+                                    <!-- Confirm Password Field -->
+                                    <div class="form-group">
+                                        <label for="password2">Confirm Password</label>
+                                        <input type="password" class="form-control" id="password2" placeholder="Confirm Password" name='password2' 
+                                               required minlength="8">
+                                        {% comment %} <small class="form-text text-muted">Password must match the one above.</small> {% endcomment %}
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-end pt-3">
+                                        <button type="submit" class="btn btn-warning btn-lg ms-2">Submit</button>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function validateForm() {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('password2').value;
+        const passwordPattern = /^(?=.*\d)(?=.*[A-Z])(?=.*[\W_]).{8,}$/;
+
+        // Validate password
+        if (!passwordPattern.test(password)) {
+            alert('Password must be at least 8 characters long and include at least one number, one uppercase letter, and one special character.');
+            return false;
+        }
+
+        // Validate password confirmation
+        if (password !== confirmPassword) {
+            alert('Passwords do not match.');
+            return false;
+        }
+
+        return true; // Allow form submission
+    }
+</script>
+
+{% endblock body %}
